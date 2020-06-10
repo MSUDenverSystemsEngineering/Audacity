@@ -40,7 +40,7 @@
 [CmdletBinding()]
 Param (
 	[Parameter(Mandatory=$false)]
-	[ValidateSet('Install','Uninstall','Repair')]
+	[ValidateSet('Install','Uninstall')]
 	[string]$DeploymentType = 'Install',
 	[Parameter(Mandatory=$false)]
 	[ValidateSet('Interactive','Silent','NonInteractive')]
@@ -55,7 +55,7 @@ Param (
 
 Try {
 	## Set the script execution policy for this process
-	Try { Set-ExecutionPolicy -ExecutionPolicy 'ByPass' -Scope 'Process' -Force -ErrorAction 'Stop' } Catch {}
+	Try { Set-ExecutionPolicy -ExecutionPolicy 'ByPass' -Scope 'Process' -Force -ErrorAction 'Stop' } Catch { Write-Error "Failed to set the execution policy to Bypass for this process." }
 
 	##*===============================================
 	##* VARIABLE DECLARATION
@@ -68,8 +68,8 @@ Try {
 	[string]$appLang = 'EN'
 	[string]$appRevision = '01'
 	[string]$appScriptVersion = '2.4.1'
-	[string]$appScriptDate = '06/10/2020'
-	[string]$appScriptAuthor = 'David Torres'
+	[string]$appScriptDate = '63/10/2020'
+	[string]$appScriptAuthor = 'DTSysEng'
 	##*===============================================
 	## Variables: Install Titles (Only set here to override defaults set by the toolkit)
 	[string]$installName = ''
@@ -83,8 +83,8 @@ Try {
 
 	## Variables: Script
 	[string]$deployAppScriptFriendlyName = 'Deploy Application'
-	[version]$deployAppScriptVersion = [version]'3.8.2'
-	[string]$deployAppScriptDate = '08/05/2020'
+	[version]$deployAppScriptVersion = [version]'3.7.0'
+	[string]$deployAppScriptDate = '02/13/2018'
 	[hashtable]$deployAppScriptParameters = $psBoundParameters
 
 	## Variables: Environment
@@ -110,13 +110,13 @@ Try {
 	##* END VARIABLE DECLARATION
 	##*===============================================
 
-	If ($deploymentType -ine 'Uninstall' -and $deploymentType -ine 'Repair') {
+	If ($deploymentType -ine 'Uninstall') {
 		##*===============================================
 		##* PRE-INSTALLATION
 		##*===============================================
 		[string]$installPhase = 'Pre-Installation'
 
-		## Show Welcome Message, close Internet Explorer if required, allow up to 3 deferrals, verify there is enough disk space to complete the install, and persist the prompt
+		## Show Welcome Message, close Firefox if needed, verify there is enough disk space to complete the install, and persist the prompt
 		Show-InstallationWelcome -CloseApps 'iexplore' -AllowDefer -DeferTimes 3 -CheckDiskSpace -PersistPrompt
 
 		## Show Progress Message (with the default message)
@@ -137,8 +137,8 @@ Try {
 		}
 
 		## <Perform Installation tasks here>
-        $exitCode = Execute-Process -Path "$dirFiles\audacity-win-2.1.3.exe" -Parameters "/verysilent /suppressmsgboxes /closeapplications" -WindowStyle "Hidden" -PassThru
-        If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
+		$exitCode = Execute-Process -Path "Firefox Setup ${appVersion}esr.exe" -Parameters "-ms" -WindowStyle "Hidden" -WaitForMsiExec -PassThru
+		If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 
 		##*===============================================
 		##* POST-INSTALLATION
@@ -146,7 +146,7 @@ Try {
 		[string]$installPhase = 'Post-Installation'
 
 		## <Perform Post-Installation tasks here>
-        $ProfilePaths = Get-UserProfiles | Select-Object -ExpandProperty 'ProfilePath'
+		$ProfilePaths = Get-UserProfiles | Select-Object -ExpandProperty 'ProfilePath'
 		ForEach ($Profile in $ProfilePaths) {
     	Copy-File -Path "$dirSupportFiles\audacity" -Destination "$Profile\Appdata\Roaming\" -Recurse
 
@@ -155,6 +155,7 @@ Try {
 	}
 	ElseIf ($deploymentType -ieq 'Uninstall')
 	{
+	
 		##*===============================================
 		##* PRE-UNINSTALLATION
 		##*===============================================
@@ -167,7 +168,6 @@ Try {
 		Show-InstallationProgress
 
 		## <Perform Pre-Uninstallation tasks here>
-        
 
 
 		##*===============================================
@@ -175,14 +175,13 @@ Try {
 		##*===============================================
 		[string]$installPhase = 'Uninstallation'
 
-		## Handle Zero-Config MSI Uninstallations
 		If ($useDefaultMsi) {
 			[hashtable]$ExecuteDefaultMSISplat =  @{ Action = 'Uninstall'; Path = $defaultMsiFile }; If ($defaultMstFile) { $ExecuteDefaultMSISplat.Add('Transform', $defaultMstFile) }
 			Execute-MSI @ExecuteDefaultMSISplat
 		}
 
 		# <Perform Uninstallation tasks here>
-        
+		
 		Execute-Process -Path "C:\Program Files (x86)\Audacity\unins000.exe" -Parameters "/silent" -WindowStyle "Hidden" -PassThru
 
 
@@ -192,42 +191,8 @@ Try {
 		[string]$installPhase = 'Post-Uninstallation'
 
 		## <Perform Post-Uninstallation tasks here>
-
-
 	}
-	ElseIf ($deploymentType -ieq 'Repair')
-	{
-		##*===============================================
-		##* PRE-REPAIR
-		##*===============================================
-		[string]$installPhase = 'Pre-Repair'
 
-		## Show Progress Message (with the default message)
-		Show-InstallationProgress
-
-		## <Perform Pre-Repair tasks here>
-
-		##*===============================================
-		##* REPAIR
-		##*===============================================
-		[string]$installPhase = 'Repair'
-
-		## Handle Zero-Config MSI Repairs
-		If ($useDefaultMsi) {
-			[hashtable]$ExecuteDefaultMSISplat =  @{ Action = 'Repair'; Path = $defaultMsiFile; }; If ($defaultMstFile) { $ExecuteDefaultMSISplat.Add('Transform', $defaultMstFile) }
-		Execute-MSI @ExecuteDefaultMSISplat
-		}
-		# <Perform Repair tasks here>
-
-		##*===============================================
-		##* POST-REPAIR
-		##*===============================================
-		[string]$installPhase = 'Post-Repair'
-
-		## <Perform Post-Repair tasks here>
-
-
-    }
 	##*===============================================
 	##* END SCRIPT BODY
 	##*===============================================
@@ -242,3 +207,118 @@ Catch {
 	Show-DialogBox -Text $mainErrorMessage -Icon 'Stop'
 	Exit-Script -ExitCode $mainExitCode
 }
+
+# SIG # Begin signature block
+# MIIU4wYJKoZIhvcNAQcCoIIU1DCCFNACAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAUgp+E1ZSyxakQ
+# SNQmWl4UO0dac+17VTAT+P8rlO3+K6CCD4cwggQUMIIC/KADAgECAgsEAAAAAAEv
+# TuFS1zANBgkqhkiG9w0BAQUFADBXMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xv
+# YmFsU2lnbiBudi1zYTEQMA4GA1UECxMHUm9vdCBDQTEbMBkGA1UEAxMSR2xvYmFs
+# U2lnbiBSb290IENBMB4XDTExMDQxMzEwMDAwMFoXDTI4MDEyODEyMDAwMFowUjEL
+# MAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKDAmBgNVBAMT
+# H0dsb2JhbFNpZ24gVGltZXN0YW1waW5nIENBIC0gRzIwggEiMA0GCSqGSIb3DQEB
+# AQUAA4IBDwAwggEKAoIBAQCU72X4tVefoFMNNAbrCR+3Rxhqy/Bb5P8npTTR94ka
+# v56xzRJBbmbUgaCFi2RaRi+ZoI13seK8XN0i12pn0LvoynTei08NsFLlkFvrRw7x
+# 55+cC5BlPheWMEVybTmhFzbKuaCMG08IGfaBMa1hFqRi5rRAnsP8+5X2+7UulYGY
+# 4O/F69gCWXh396rjUmtQkSnF/PfNk2XSYGEi8gb7Mt0WUfoO/Yow8BcJp7vzBK6r
+# kOds33qp9O/EYidfb5ltOHSqEYva38cUTOmFsuzCfUomj+dWuqbgz5JTgHT0A+xo
+# smC8hCAAgxuh7rR0BcEpjmLQR7H68FPMGPkuO/lwfrQlAgMBAAGjgeUwgeIwDgYD
+# VR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFEbYPv/c
+# 477/g+b0hZuw3WrWFKnBMEcGA1UdIARAMD4wPAYEVR0gADA0MDIGCCsGAQUFBwIB
+# FiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAzBgNVHR8E
+# LDAqMCigJqAkhiJodHRwOi8vY3JsLmdsb2JhbHNpZ24ubmV0L3Jvb3QuY3JsMB8G
+# A1UdIwQYMBaAFGB7ZhpFDZfKiVAvfQTNNKj//P1LMA0GCSqGSIb3DQEBBQUAA4IB
+# AQBOXlaQHka02Ukx87sXOSgbwhbd/UHcCQUEm2+yoprWmS5AmQBVteo/pSB204Y0
+# 1BfMVTrHgu7vqLq82AafFVDfzRZ7UjoC1xka/a/weFzgS8UY3zokHtqsuKlYBAIH
+# MNuwEl7+Mb7wBEj08HD4Ol5Wg889+w289MXtl5251NulJ4TjOJuLpzWGRCCkO22k
+# aguhg/0o69rvKPbMiF37CjsAq+Ah6+IvNWwPjjRFl+ui95kzNX7Lmoq7RU3nP5/C
+# 2Yr6ZbJux35l/+iS4SwxovewJzZIjyZvO+5Ndh95w+V/ljW8LQ7MAbCOf/9RgICn
+# ktSzREZkjIdPFmMHMUtjsN/zMIIEnzCCA4egAwIBAgISESHWmadklz7x+EJ+6RnM
+# U0EUMA0GCSqGSIb3DQEBBQUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9i
+# YWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIFRpbWVzdGFtcGluZyBD
+# QSAtIEcyMB4XDTE2MDUyNDAwMDAwMFoXDTI3MDYyNDAwMDAwMFowYDELMAkGA1UE
+# BhMCU0cxHzAdBgNVBAoTFkdNTyBHbG9iYWxTaWduIFB0ZSBMdGQxMDAuBgNVBAMT
+# J0dsb2JhbFNpZ24gVFNBIGZvciBNUyBBdXRoZW50aWNvZGUgLSBHMjCCASIwDQYJ
+# KoZIhvcNAQEBBQADggEPADCCAQoCggEBALAXrqLTtgQwVh5YD7HtVaTWVMvY9nM6
+# 7F1eqyX9NqX6hMNhQMVGtVlSO0KiLl8TYhCpW+Zz1pIlsX0j4wazhzoOQ/DXAIlT
+# ohExUihuXUByPPIJd6dJkpfUbJCgdqf9uNyznfIHYCxPWJgAa9MVVOD63f+ALF8Y
+# ppj/1KvsoUVZsi5vYl3g2Rmsi1ecqCYr2RelENJHCBpwLDOLf2iAKrWhXWvdjQIC
+# KQOqfDe7uylOPVOTs6b6j9JYkxVMuS2rgKOjJfuv9whksHpED1wQ119hN6pOa9PS
+# UyWdgnP6LPlysKkZOSpQ+qnQPDrK6Fvv9V9R9PkK2Zc13mqF5iMEQq8CAwEAAaOC
+# AV8wggFbMA4GA1UdDwEB/wQEAwIHgDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBHjA0
+# MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0
+# b3J5LzAJBgNVHRMEAjAAMBYGA1UdJQEB/wQMMAoGCCsGAQUFBwMIMEIGA1UdHwQ7
+# MDkwN6A1oDOGMWh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3MvZ3N0aW1lc3Rh
+# bXBpbmdnMi5jcmwwVAYIKwYBBQUHAQEESDBGMEQGCCsGAQUFBzAChjhodHRwOi8v
+# c2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc3RpbWVzdGFtcGluZ2cyLmNy
+# dDAdBgNVHQ4EFgQU1KKESjhaGH+6TzBQvZ3VeofWCfcwHwYDVR0jBBgwFoAURtg+
+# /9zjvv+D5vSFm7DdatYUqcEwDQYJKoZIhvcNAQEFBQADggEBAI+pGpFtBKY3IA6D
+# lt4j02tuH27dZD1oISK1+Ec2aY7hpUXHJKIitykJzFRarsa8zWOOsz1QSOW0zK7N
+# ko2eKIsTShGqvaPv07I2/LShcr9tl2N5jES8cC9+87zdglOrGvbr+hyXvLY3nKQc
+# MLyrvC1HNt+SIAPoccZY9nUFmjTwC1lagkQ0qoDkL4T2R12WybbKyp23prrkUNPU
+# N7i6IA7Q05IqW8RZu6Ft2zzORJ3BOCqt4429zQl3GhC+ZwoCNmSIubMbJu7nnmDE
+# Rqi8YTNsz065nLlq8J83/rU9T5rTTf/eII5Ol6b9nwm8TcoYdsmwTYVQ8oDSHQb1
+# WAQHsRgwggbIMIIFsKADAgECAhN/AAAAIhO6jvua86/0AAEAAAAiMA0GCSqGSIb3
+# DQEBCwUAMGIxEzARBgoJkiaJk/IsZAEZFgNlZHUxGTAXBgoJkiaJk/IsZAEZFglt
+# c3VkZW52ZXIxFTATBgoJkiaJk/IsZAEZFgV3aW5hZDEZMBcGA1UEAxMQd2luYWQt
+# Vk1XQ0EwMS1DQTAeFw0xNjA1MjcyMTI0MDJaFw0xODA1MjcyMTI0MDJaMIG/MQsw
+# CQYDVQQGEwJVUzERMA8GA1UECBMIQ29sb3JhZG8xDzANBgNVBAcTBkRlbnZlcjEw
+# MC4GA1UEChMnTWV0cm9wb2xpdGFuIFN0YXRlIFVuaXZlcnNpdHkgb2YgRGVudmVy
+# MSgwJgYDVQQLEx9JbmZvcm1hdGlvbiBUZWNobm9sb2d5IFNlcnZpY2VzMTAwLgYD
+# VQQDEydNZXRyb3BvbGl0YW4gU3RhdGUgVW5pdmVyc2l0eSBvZiBEZW52ZXIwggEi
+# MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCxCPUOmGXq89WCOBso0z5QIApw
+# EosnzQeoI9zP+n8wEb7BEA//+UTmjIZHe3jP0dF6C7EFhx2FcZxs8XQgSH5bnwor
+# rkLMa1FzcP2GlcNE5F+ms1zk5Bp2x2nsMOcx+12h9A6eU+JR3nXfWFwkNfvOAKrj
+# 1mo4BO5TEvx4DtrVBYFli+0JGnALa1Hd7A68nYtG743FPbioQn8EQSnDr+Jjtd8l
+# vujd9I5IQPptiU3inmcoaG+UFz8HKu7QS/mOLpoz/kjbSShxdNF0mcFmowg8WYMu
+# f8f1trOtsmWJ3lpyroKek8Ie9oOnKw3And2dOgqWxVXnfLEhW8b6PElvZc73AgMB
+# AAGjggMXMIIDEzAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwEw
+# GwYJKwYBBAGCNxUKBA4wDDAKBggrBgEFBQcDAzAdBgNVHQ4EFgQUxu8skV6twX8T
+# i5hj8XjbzTUYeqgwHwYDVR0jBBgwFoAUbmigb8ibDuAf063cjbVhC57XDzQwggEo
+# BgNVHR8EggEfMIIBGzCCARegggEToIIBD4aBxWxkYXA6Ly8vQ049d2luYWQtVk1X
+# Q0EwMS1DQSgxKSxDTj1WTVdDQTAxLENOPUNEUCxDTj1QdWJsaWMlMjBLZXklMjBT
+# ZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPXdpbmFkLERD
+# PW1zdWRlbnZlcixEQz1lZHU/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNl
+# P29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50hkVodHRwOi8vVk1XQ0Ew
+# MS53aW5hZC5tc3VkZW52ZXIuZWR1L0NlcnRFbnJvbGwvd2luYWQtVk1XQ0EwMS1D
+# QSgxKS5jcmwwggE+BggrBgEFBQcBAQSCATAwggEsMIG6BggrBgEFBQcwAoaBrWxk
+# YXA6Ly8vQ049d2luYWQtVk1XQ0EwMS1DQSxDTj1BSUEsQ049UHVibGljJTIwS2V5
+# JTIwU2VydmljZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz13aW5h
+# ZCxEQz1tc3VkZW52ZXIsREM9ZWR1P2NBQ2VydGlmaWNhdGU/YmFzZT9vYmplY3RD
+# bGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MG0GCCsGAQUFBzAChmFodHRwOi8v
+# Vk1XQ0EwMS53aW5hZC5tc3VkZW52ZXIuZWR1L0NlcnRFbnJvbGwvVk1XQ0EwMS53
+# aW5hZC5tc3VkZW52ZXIuZWR1X3dpbmFkLVZNV0NBMDEtQ0EoMSkuY3J0MCEGCSsG
+# AQQBgjcUAgQUHhIAVwBlAGIAUwBlAHIAdgBlAHIwDQYJKoZIhvcNAQELBQADggEB
+# AIpoMvUtE1iFHSbi7X/M9a+JBPpiAQZzEbq70is1mzdosSVTMN7QoWk4WzHCJBpX
+# Oh7cvBrTLf0m4EqJ7OwPY43ZW7MycOjgtk393CaCzr9BiEDjWzJf8r5bDDCodEFm
+# dodj3/el8nV4HapjiGnJKrhg0b3xRjPP4cvjtBltbqO7tngkpDu+m63X68aC3wrt
+# XwJulfsGeTbd0v4hkji9GCTpLT92mkJyJE04SA/thv4F7yNx1W5XCEWswZeGLiR5
+# 9C5AlUm1WrhjAaoyxabDJWfljV//qk+TeoC5CNQ7ZkqdxFBYPc5d2UdkmmiK76D+
+# qaobXtlVJ9wRYfFoOaUb5dQxggSyMIIErgIBATB5MGIxEzARBgoJkiaJk/IsZAEZ
+# FgNlZHUxGTAXBgoJkiaJk/IsZAEZFgltc3VkZW52ZXIxFTATBgoJkiaJk/IsZAEZ
+# FgV3aW5hZDEZMBcGA1UEAxMQd2luYWQtVk1XQ0EwMS1DQQITfwAAACITuo77mvOv
+# 9AABAAAAIjANBglghkgBZQMEAgEFAKBmMBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
+# gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwLwYJKoZIhvcNAQkEMSIEIORq
+# skha2RhWmf0LCEmW+zvb5nmaEGFR/J7yOIZPIx3pMA0GCSqGSIb3DQEBAQUABIIB
+# AKx3w04Y3np+L+dFSkGzeZ9uEHvPO7TS1CanJ43hHCtiSjGQVL/Op9H1OMTvya6E
+# PI9GgFRRbB+Bzo4scZ5dfUoldgLB43SOda32VxU69GDpsBaVgKgNrixUPDIeeyM6
+# MghtvoPFEVw3WhD27HftNnD7v/eheTHM53HI+WCFMU50F0RjaUpH25PDJ79XJ03s
+# Pf3UNCG9nShrSyANFiRDpzfQLBgzCs7h7YtvtgL5ch/IKvg9Cz6wU9DfvIUlGlEy
+# eJjJFeIcOkI52wrSbxkLjaArUPNb9YtPZRU0gCxZ2a5LEVMfZTweYYi8C5MSMk99
+# 18rAUi7KJIJ8wnhqAdgS1b2hggKiMIICngYJKoZIhvcNAQkGMYICjzCCAosCAQEw
+# aDBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYG
+# A1UEAxMfR2xvYmFsU2lnbiBUaW1lc3RhbXBpbmcgQ0EgLSBHMgISESHWmadklz7x
+# +EJ+6RnMU0EUMAkGBSsOAwIaBQCggf0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEH
+# ATAcBgkqhkiG9w0BCQUxDxcNMTgwMzA3MTgyMjE4WjAjBgkqhkiG9w0BCQQxFgQU
+# 6tYVloNqA4dlm3/2HNW2kJWfgvwwgZ0GCyqGSIb3DQEJEAIMMYGNMIGKMIGHMIGE
+# BBRjuC+rYfWDkJaVBQsAJJxQKTPseTBsMFakVDBSMQswCQYDVQQGEwJCRTEZMBcG
+# A1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xvYmFsU2lnbiBUaW1l
+# c3RhbXBpbmcgQ0EgLSBHMgISESHWmadklz7x+EJ+6RnMU0EUMA0GCSqGSIb3DQEB
+# AQUABIIBAKVNGCpP6r1ImRgx0bu6zK5lx67/4yLR1Ie7Tf16Gd5ST+dLWx/uQZBU
+# lrlaFb9PkTPYYLH/NeIUirsyiUPtKuPmZRWmUH0DqVdLzGoA4lhKWPTCIljgER2B
+# Xyv+WVog5y0ZrwE2N+0E7HzeSitYl6kSe964JXn1m76eifJp8qqbo5MOky49kW3u
+# FN9KojcBt9ik2E+P8ASYbsPfIasNxDZcdI6AaHByuy6/Hkei+8ReUOZvk+fua57q
+# 0cp6EhKGDmlSAwWwi14wSy0rDJcfx46Hvc9+n8tuvj+8zw6KO+/cWLHvZL9zKIfl
+# dC1ndIvGTyy+VQvsH5jKU4Xg3PXom48=
+# SIG # End signature block
