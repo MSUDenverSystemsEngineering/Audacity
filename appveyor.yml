@@ -1,5 +1,5 @@
 version: 1.0.{build}
-image: WMF 4
+image: WMF 5
 init:
 - ps: $deploy = "`$vmwfs14 = New-PSSession -ComputerName VMWFS14`nCopy-Item -Path `"`${Env:APPLICATION_PATH}\`${Env:APPVEYOR_PROJECT_SLUG}`" -Destination `"H:\Archive\SCCM\Staging\`${Env:APPVEYOR_PROJECT_NAME}\`${Env:APPVEYOR_BUILD_VERSION}`" -ToSession `$vmwfs14 -Recurse"
 install:
