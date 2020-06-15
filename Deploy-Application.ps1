@@ -121,7 +121,7 @@ Try {
 		[string]$installPhase = 'Pre-Installation'
 
 		## Show Welcome Message, close Internet Explorer if needed, verify there is enough disk space to complete the install, and persist the prompt
-		Show-InstallationWelcome -CloseApps 'iexplore' -CheckDiskSpace -PersistPrompt
+		Show-InstallationWelcome  -CheckDiskSpace -PersistPrompt
 
 		## Show Progress Message (with the default message)
 		Show-InstallationProgress
@@ -141,7 +141,7 @@ Try {
 		}
 
 		## <Perform Installation tasks here>
-        $exitCode = Execute-Process -Action "install" -Path "$dirFiles\audacity-win-2.4.1.exe" -Parameters "/verysilent /suppressmsgboxes /closeapplications" -WindowStyle "Hidden" -PassThru
+        $exitCode = Execute-Process -Path "$dirFiles\audacity-win-2.4.1.exe" -Parameters "/verysilent /suppressmsgboxes /closeapplications" -WindowStyle "Hidden" -PassThru
         If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 
 
@@ -168,7 +168,7 @@ Try {
 		[string]$installPhase = 'Pre-Uninstallation'
 
 		## Show Welcome Message, close Internet Explorer with a 60 second countdown before automatically closing
-		Show-InstallationWelcome -CloseApps 'iexplore' -CloseAppsCountdown 60
+		Show-InstallationWelcome 
 
 		## Show Progress Message (with the default message)
 		Show-InstallationProgress
