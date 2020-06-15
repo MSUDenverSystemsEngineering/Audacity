@@ -141,7 +141,7 @@ Try {
 		}
 
 		## <Perform Installation tasks here>
-            $exitCode = Execute-Process -Path "$dirFiles\audacity-win-2.1.3.exe" -Parameters "/verysilent /suppressmsgboxes /closeapplications" -WindowStyle "Hidden" -PassThru
+        $exitCode = Execute-Process -Path "$dirFiles\audacity-win-2.1.3.exe" -Parameters "/verysilent /suppressmsgboxes /closeapplications" -WindowStyle "Hidden" -PassThru
         If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 
 
@@ -151,12 +151,12 @@ Try {
 		[string]$installPhase = 'Post-Installation'
 
 		## <Perform Post-Installation tasks here>
-            $ProfilePaths = Get-UserProfiles | Select-Object -ExpandProperty 'ProfilePath'
+        $ProfilePaths = Get-UserProfiles | Select-Object -ExpandProperty 'ProfilePath'
 		ForEach ($Profile in $ProfilePaths) {
     	Copy-File -Path "$dirSupportFiles\audacity" -Destination "$Profile\Appdata\Roaming\" -Recurse
 
 		## Display a message at the end of the install
-		If (-not $useDefaultMsi) {
+		If (-not $useDefaultMsi) { Show-InstallationPrompt -Message 'You can customize text to appear at the end of an install or remove it completely for unattended installations.' -ButtonRightText 'OK' -Icon Information -NoWait }
 
 		}
 	}
@@ -188,6 +188,7 @@ Try {
 		}
 
 		# <Perform Uninstallation tasks here>
+        Execute-Process -Path "C:\Program Files (x86)\Audacity\unins000.exe" -Parameters "/silent" -WindowStyle "Hidden" -PassThru
 
 
 		##*===============================================
@@ -196,7 +197,7 @@ Try {
 		[string]$installPhase = 'Post-Uninstallation'
 
 		## <Perform Post-Uninstallation tasks here>
-
+        
 
 	}
 	ElseIf ($deploymentType -ieq 'Repair')
