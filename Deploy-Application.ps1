@@ -127,6 +127,8 @@ Try {
 		Show-InstallationProgress
 
 		## <Perform Pre-Installation tasks here>
+		If (Test-Path -path "C:\Program Files (x86)\Audacity") {
+		Execute-Process -Path "C:\Program Files (x86)\Audacity\unins000.exe" -Parameters "/silent" -WindowStyle "Hidden" -PassThru }
 
 
 		##*===============================================
@@ -154,6 +156,7 @@ Try {
 		$ProfilePaths = Get-UserProfiles | Select-Object -ExpandProperty 'ProfilePath'
 		ForEach ($Profile in $ProfilePaths) {
 		Copy-File -Path "$dirSupportFiles\audacity" -Destination "$Profile\Appdata\Roaming\" -Recurse }
+		Remove-File -Path "$envCommonDesktop\Audacity.lnk"
 
 		## Display a message at the end of the install
 		If (-not $useDefaultMsi) {}
@@ -172,6 +175,8 @@ Try {
 		Show-InstallationProgress
 
 		## <Perform Pre-Uninstallation tasks here>
+		Remove-File -Path "$envProgramFilesX86\Audacity"
+
 
 
 		##*===============================================
@@ -249,8 +254,8 @@ Catch {
 # SIG # Begin signature block
 # MIIT7gYJKoZIhvcNAQcCoIIT3zCCE9sCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUR6HaFUJ2E5AMPLaDwndoMq33
-# nRSgghEmMIIFgTCCBGmgAwIBAgIQOXJEOvkit1HX02wQ3TE1lTANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUtFi+l4EnIwcM1qbaCOAsaTqi
+# e7SgghEmMIIFgTCCBGmgAwIBAgIQOXJEOvkit1HX02wQ3TE1lTANBgkqhkiG9w0B
 # AQwFADB7MQswCQYDVQQGEwJHQjEbMBkGA1UECAwSR3JlYXRlciBNYW5jaGVzdGVy
 # MRAwDgYDVQQHDAdTYWxmb3JkMRowGAYDVQQKDBFDb21vZG8gQ0EgTGltaXRlZDEh
 # MB8GA1UEAwwYQUFBIENlcnRpZmljYXRlIFNlcnZpY2VzMB4XDTE5MDMxMjAwMDAw
@@ -347,11 +352,11 @@ Catch {
 # bW1vbiBSU0EgQ29kZSBTaWduaW5nIENBAhAHA3HRD3laQHGZK5QHYpviMAkGBSsO
 # AwIaBQCgeDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEM
 # BgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMCMGCSqG
-# SIb3DQEJBDEWBBSt6Qev0eoN3b6dNmmR7dUJxMKojzANBgkqhkiG9w0BAQEFAASC
-# AQAEHQZ7aV08zyPMd+XJHeo1W1+EUqGfRh4rBejK6RAjYzzWtEHbWPmuQnEgDQCR
-# WlWVGSor3BP1yNXm8YIhRdjH1H03zfkLe8f31q9JcGZek17M9XzcajmTEfLOM1Pk
-# 4g+kJE9icazhAOEdSCv9P5Dmh2Z3VLG3f1j9xfuPYeHKcJuyjcPhSQtITNHShADa
-# 85IVnBNfwUDDVn7QxIqihOyGkN2yeDUT9NSV4p9GmnkDzBkkvR8Bq1/88uKruGB6
-# bihsEotrpoFjP1ySX8K3nK1+yZtd1+Kh3cIMY6dYU73bhsEops+57Fl6xH4TXkol
-# m9oZOA5VYgdFunFM/4JZaHmi
+# SIb3DQEJBDEWBBRw8cB4Ekx2qAiaPSXOjcNfuQpU6TANBgkqhkiG9w0BAQEFAASC
+# AQBowy34RRSLPJyAlJSnWG78CDQOLuUjrqDp3wZZO0X3jcBQYBzQv0I1TRgQCPmQ
+# 6CIiWNBu5/eRPg6U6yPDli90mtGXosJsxAAas2HZl/rWlQiCHol8WOyUIaKfRT3k
+# 2NjFsPoJP2dWSV0MOFRl0SOLQPkYFuwjlWlNR9lXkFhMSJb1uHmKoUG1lE+s7Ew4
+# wl93mlD6yt2nlP+xWllJtZJgOGrPRqmcGeHkLizFZXKf7SNjL1Z/PRTDvylsPaUH
+# e6xTnhdi//LGQDowS1MatsHZzmRDPJ/GAL6vmfjRrKdODjWoplZesRCQfNUC8EYD
+# xypsy9p2B28zsPljVliqe/EP
 # SIG # End signature block
