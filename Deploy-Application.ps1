@@ -73,7 +73,7 @@ Try {
 	[string]$appRevision = '01'
 	[string]$appScriptVersion = '3.1.3'
 	[string]$appScriptDate = '02/08/2022'
-	[string]$appScriptAuthor = '<Ryan McKenna>'
+	[string]$appScriptAuthor = 'Ryan McKenna'
 	##*===============================================
 	## Variables: Install Titles (Only set here to override defaults set by the toolkit)
 	[string]$installName = ''
@@ -131,7 +131,7 @@ Try {
 		Execute-Process -Path "C:\Program Files (x86)\Audacity\unins000.exe" -Parameters "/silent" -WindowStyle "Hidden" -PassThru }
 		If (Test-Path -path "C:\Program Files\Audacity\Audacity.exe") {
 		Execute-Process -Path "C:\Program Files\Audacity\unins000.exe" -Parameters "/silent" -WindowStyle "Hidden" -PassThru }
-		
+
 
 
 		##*===============================================
@@ -259,8 +259,13 @@ Catch {
 # SIG # Begin signature block
 # MIImZwYJKoZIhvcNAQcCoIImWDCCJlQCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
+<<<<<<< HEAD
 # KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAtHNvkCiSzV/YG
 # lYvJaW57S6xc4sw9NwtKGoFGk7sT5aCCH9IwggVvMIIEV6ADAgECAhBI/JO0YFWU
+=======
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDjZeaWRYBDBqkx
+# PDkvjFP0CKA12NQYucd0n55vwhXjbaCCH9IwggVvMIIEV6ADAgECAhBI/JO0YFWU
+>>>>>>> a993a5eed41b4544e8cfee2ed8d325b4d2fb0e5d
 # jTanyYqJ1pQWMA0GCSqGSIb3DQEBDAUAMHsxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 # DBJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcMB1NhbGZvcmQxGjAYBgNVBAoM
 # EUNvbW9kbyBDQSBMaW1pdGVkMSEwHwYDVQQDDBhBQUEgQ2VydGlmaWNhdGUgU2Vy
@@ -435,6 +440,7 @@ Catch {
 # IFNpZ25pbmcgQ0EgUjM2AhEApU3fcPvc8UxUgrjysXLKMTANBglghkgBZQMEAgEF
 # AKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgor
 # BgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3
+<<<<<<< HEAD
 # DQEJBDEiBCCvUv00hZL+ZbMZYDDDdh5MOpxZE3cJnsZyPd6C7/EVsTANBgkqhkiG
 # 9w0BAQEFAASCAYASDPRRZlytHBUWbwg/kVDkFO99clMwGB3UarUs+xZVYAu/CCr1
 # A47jPHImKo/HDQkAzjWVqYdOUWBjvv4PnuWmSFBBE2j2KQi6Eal74KJK7mTMs3Je
@@ -445,10 +451,23 @@ Catch {
 # p+OZyM5iSfXV8s2y6Xl7oPY6J0sXRO/L95Bk+7zrXbEP4mxlb3ww1gnHEMuuFQIB
 # SgD0GC7Xgd7QTbn6W5zAr2xC0DOFj6Uic2JH95ngiKIZ7oZRY6N0PNDXDaM53fxt
 # TSqquLf7p0RB+ymhggNMMIIDSAYJKoZIhvcNAQkGMYIDOTCCAzUCAQEwgZIwfTEL
+=======
+# DQEJBDEiBCDPe/8F1+7PZSiFpVmtw+qlemPM0ztGtzaMmZoZ+jWOjjANBgkqhkiG
+# 9w0BAQEFAASCAYCQ8a85QyDMaSIhI64JFeh/gtyq0pMymCByShfIbunV3zgxE/Rr
+# C3g5KPZIlChkx/80NraK92leS2RJfWGcldIlCOA/NBKvJxT8Pni682eq4l1fGSzd
+# kZgifPiFgtCEGL5vsQA7iwgFcTLDB0XY2BYHKIyPQ9Fxv0ikhTX/wrxmSmFgiDQu
+# P1VCwMu1gS+vCjU38EYzsRDiOP8UMozUmMAIx1MA97CY3Bj1f4TxLphgBRZypT/e
+# zD6/X4/9vkyFG5F2oXq2HbYwp2FR+r45PvZzThS/L0PGYujjgFhjZsZKTxXy4JnY
+# qxfQVu+rdiVHdbSqkgSivtETvemYa3zy9CPf+EOq28VIDk1uSEf+k+oS3615Sf35
+# 8ViPuJNAPxcAKI71B37611lExapMDX92OnSnsqxSGhpkF1StqAEWf15vN/ZcLrCE
+# bWqzZePJizNRh2/bOjZnHgpiJQHGSa02i2wnfwtQfyzU8RigceoXAlDrX+Yh2YZA
+# Vy0m8w7YCX/aFPyhggNMMIIDSAYJKoZIhvcNAQkGMYIDOTCCAzUCAQEwgZIwfTEL
+>>>>>>> a993a5eed41b4544e8cfee2ed8d325b4d2fb0e5d
 # MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
 # BxMHU2FsZm9yZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMSUwIwYDVQQDExxT
 # ZWN0aWdvIFJTQSBUaW1lIFN0YW1waW5nIENBAhEAjHegAI/00bDGPZ86SIONazAN
 # BglghkgBZQMEAgIFAKB5MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZI
+<<<<<<< HEAD
 # hvcNAQkFMQ8XDTIyMDIyMzE3MTUzMlowPwYJKoZIhvcNAQkEMTIEMAjIpbeCaP8G
 # KoJ/NUdBLi/2qSuDuarrWWQIkNbK+q7a+BB7xtDJI5BvWv/AmiWi3zANBgkqhkiG
 # 9w0BAQEFAASCAgB87XBLbXkChTlaJv9uIlVgJhLcOMNjtY5AXYnxNzUcIywIEFtH
@@ -462,4 +481,19 @@ Catch {
 # npu/PiFkVtaAkMAMid0x3MwNV4fbT/W8y5sfHPH1IdfDL1wXyvlkwp4O1UEBOH9X
 # txcwfnt8dE+J9g9A8E21BW34HnJFeOq+vR7s0A4MVnNOZahKUsouy0r+c5HVavuB
 # bnvSSOpUaO7ljrlNGYQNGuIeUiJMeZVJ8N7tNwBk4KJ4VHsHPx0mktE9Rw==
+=======
+# hvcNAQkFMQ8XDTIyMDIwOTIyMDYwMlowPwYJKoZIhvcNAQkEMTIEMO2XVzGcRIfc
+# P3g0jOV3dlxBN2blk9UV8mJcHek9ovBMTInrF1ggIaZGKIGTif5P0DANBgkqhkiG
+# 9w0BAQEFAASCAgCQ9w19TEPR6CT4cJ61grGedxQGKz6dO+ye2IZTqBztrEKeEwa0
+# CuyfyoAUPPleVI+WwzsSLLDzCxAQkOkFPzGtDnWNcpXxqB4p4KAOX9foH0b7zg9k
+# PFU96lqqulXtCxu1WkPGCrhXH7jUtIyLysxGUxuvFh7eRB/uGZSgu3unij9NQl8u
+# 3QO2u28kvedIC9CwFAI/50YALg+9VHtHz4co04Ng6YvvZr2EKUZJKBQuxdeaF8lw
+# TJBuFKhAjGw9Rvz7qQm/fwelGWXTJlcoYDIrwcW47iW1OJD5FGSD7iZo1wey/Xgk
+# 1eNoKeF2t7seZ2DB8Yv2U6b/6lpiRGgGwCkALOGlbeCd/zfCU2MJHPrGHCcMQU1k
+# VQjgiB++9WH49uBqPc84Y5TEQno1FxHBfeRZjBIsZ3p4YUDccEMklKw6Ckf13g/l
+# obcDUa+26Jnz7JckHdxepx2qshidMqFLxaSPo60aY/bsMmWtdboupfwQpvPw9a4M
+# KG3bpDNAd5PdlGx4erzSFhltqrhEaleCqOpfKhoICeuvDeQ6PWbY+PqrC6lUFIe1
+# GYYPdHTalk/6imMvIY1zXFJyxvMNasK27x+jek1k78cx29H45/znzIU9E4swPked
+# ITwY9L8SajDAUd1lVtdpjUxmc6O10U9fRLhSEPiWhq0L9/m/mtcp7FGzjA==
+>>>>>>> a993a5eed41b4544e8cfee2ed8d325b4d2fb0e5d
 # SIG # End signature block
