@@ -20,7 +20,7 @@
 .PARAMETER TerminalServerMode
 	Changes to "user install mode" and back to "user execute mode" for installing/uninstalling applications for Remote Destkop Session Hosts/Citrix servers.
 .PARAMETER DisableLogging
-	Disables logging to file for the script. Default is: $false.
+	Disables logging to file for the script. Default is: $false.change
 .EXAMPLE
     powershell.exe -Command "& { & '.\Deploy-Application.ps1' -DeployMode 'Silent'; Exit $LastExitCode }"
 .EXAMPLE
